@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:padding="5dp">
+    <TextView
+        android:id="@+id/whattodo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="할 일"
+        android:textSize="35sp"/>
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="xxxx.xx.xx"
+        android:textSize="20sp"
+        android:layout_below="@id/whattodo"/>
+    <CheckBox
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>
