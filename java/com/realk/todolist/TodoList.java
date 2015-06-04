@@ -4,21 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class TodoList extends Activity {
@@ -31,16 +26,8 @@ public class TodoList extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list);
 
-        Realm.deleteRealmFile(this);
-
         realm = Realm.getInstance(this);
-        realm.beginTransaction();
-        Todo todoExample = realm.createObject(Todo.class);
-        todoExample.setWhatToDo("영화 보기");
-        todoExample.setDate(new Date());
-        todoExample.setPlace("용산");
-        todoExample.setDescription("매드 맥스");
-        realm.commitTransaction();
+
         todos = realm.where(Todo.class).findAll();
 
         addBtn = (Button)findViewById(R.id.btnadd);
@@ -91,7 +78,7 @@ class TodoListAdapter extends RealmBaseAdapter<Todo> implements ListAdapter {
 
         Todo todoItem = realmResults.get(position);
         viewHolder.whatToDo.setText(todoItem.getWhatToDo());
-        viewHolder.date.setText(todoItem.getDate().toString());
+        viewHolder.date.setText(todoItem.getDate());
         viewHolder.check.setChecked(todoItem.isChecked());
 
         return convertView;

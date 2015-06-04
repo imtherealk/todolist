@@ -1,13 +1,11 @@
 package com.realk.todolist;
 
-import java.util.Date;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
 public class Todo extends RealmObject {
     private String whatToDo;
-    private Date date;
+    private String date;
     private String place;
     private String description;
     private RealmList<Tag> tags;
@@ -18,7 +16,7 @@ public class Todo extends RealmObject {
         checked = false;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
     public void setWhatToDo(String whatToDo) {
@@ -40,7 +38,7 @@ public class Todo extends RealmObject {
     public String getWhatToDo() {
         return whatToDo;
     }
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
     public String getPlace() {
