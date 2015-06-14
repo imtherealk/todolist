@@ -20,6 +20,7 @@ public class AddItemActivity extends Activity {
     EditText whatToDo;
     EditText place;
     EditText description;
+    static int itemId = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,12 +48,18 @@ public class AddItemActivity extends Activity {
             @Override
             public void onClick(View v) {
                 realm.beginTransaction();
-                Todo listItem = realm.createObject(Todo.class);
-                listItem.setDate(String.format("%d.%02d.%02d.", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
-                listItem.setWhatToDo(whatToDo.getText().toString());
-                listItem.setPlace(place.getText().toString());
-                listItem.setDescription(description.getText().toString());
-                realm.commitTransaction();
+                try {
+                    Todo listItem = realm.createObject(Todo.class);
+                    listItem.setDate(String.format("%d.%02d.%02d.", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
+                    listItem.setWhatToDo(whatToDo.getText().toString());
+                    listItem.setPlace(place.getText().toString());
+                    listItem.setDescription(description.getText().toString());
+                    listItem.setId(itemId++);
+                    realm.commitTransaction();
+                } catch (Exception e) {
+                    realm.cancelTransaction();
+                    throw e;
+                }
                 finish();
             }
         });

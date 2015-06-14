@@ -32,7 +32,6 @@ public class TodoListActivity extends Activity {
         setContentView(R.layout.activity_todo_list);
 
         realm = Realm.getInstance(this);
-
         todos = realm.where(Todo.class).findAll();
 
         addBtn = (Button)findViewById(R.id.btnadd);
@@ -40,16 +39,6 @@ public class TodoListActivity extends Activity {
 
         TodoListAdapter todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
         todoList.setAdapter(todoAdapter);
-        todoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(TodoListActivity.this, "clicked", Toast.LENGTH_SHORT).show();
-                Todo selectedItem = (Todo)todoList.getItemAtPosition(position);
-                Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
-                intent.putExtra("selectedTodo", selectedItem);
-                startActivity(intent);
-            }
-        });
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,11 +79,19 @@ public class TodoListActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            Todo todoItem = realmResults.get(position);
+            final Todo todoItem = realmResults.get(position);
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate());
             viewHolder.check.setChecked(todoItem.isChecked());
 
+            convertView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
+                    intent.putExtra("position", todoItem.getId());
+                    startActivity(intent);
+
+                }
+            });
             return convertView;
         }
 

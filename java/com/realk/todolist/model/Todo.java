@@ -12,12 +12,14 @@ public class Todo extends RealmObject implements Serializable {
     private String description;
     private RealmList<Tag> tags;
     private boolean checked;
+    private int id;
 
     public Todo() {
         super();
         checked = false;
     }
 
+    public void setId(int id) { this.id = id; }
     public void setDate(String date) {
         this.date = date;
     }
@@ -37,6 +39,9 @@ public class Todo extends RealmObject implements Serializable {
         this.checked = checked;
     }
 
+    public int getId() {
+        return id;
+    }
     public String getWhatToDo() {
         return whatToDo;
     }
