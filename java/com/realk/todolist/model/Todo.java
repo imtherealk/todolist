@@ -1,9 +1,11 @@
-package com.realk.todolist;
+package com.realk.todolist.model;
+
+import java.io.Serializable;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
-public class Todo extends RealmObject {
+public class Todo extends RealmObject implements Serializable {
     private String whatToDo;
     private String date;
     private String place;

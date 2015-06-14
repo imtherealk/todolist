@@ -1,4 +1,4 @@
-package com.realk.todolist;
+package com.realk.todolist.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,9 +8,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.realk.todolist.R;
+import com.realk.todolist.model.Todo;
+
 import io.realm.Realm;
 
-public class addItemActivity extends Activity {
+public class AddItemActivity extends Activity {
     Realm realm;
     Button saveBtn;
     DatePicker picker;
@@ -44,11 +47,11 @@ public class addItemActivity extends Activity {
             @Override
             public void onClick(View v) {
                 realm.beginTransaction();
-                Todo list_item = realm.createObject(Todo.class);
-                list_item.setDate(String.format("%d.%02d.%02d.", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
-                list_item.setWhatToDo(whatToDo.getText().toString());
-                list_item.setPlace(place.getText().toString());
-                list_item.setDescription(description.getText().toString());
+                Todo listItem = realm.createObject(Todo.class);
+                listItem.setDate(String.format("%d.%02d.%02d.", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
+                listItem.setWhatToDo(whatToDo.getText().toString());
+                listItem.setPlace(place.getText().toString());
+                listItem.setDescription(description.getText().toString());
                 realm.commitTransaction();
                 finish();
             }
