@@ -12,15 +12,16 @@ import com.realk.todolist.R;
 import com.realk.todolist.model.Todo;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class AddItemActivity extends Activity {
     Realm realm;
+    RealmResults<Todo> todos;
     Button saveBtn;
     DatePicker picker;
     EditText whatToDo;
     EditText place;
     EditText description;
-    static int itemId = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,8 @@ public class AddItemActivity extends Activity {
         setContentView(R.layout.activity_add_item);
 
         realm = Realm.getInstance(this);
+        todos = realm.where(Todo.class).findAll();
+
         saveBtn = (Button)findViewById(R.id.btnsave);
         picker = (DatePicker)findViewById(R.id.datepicker);
         whatToDo = (EditText)findViewById(R.id.editwhattodo);
@@ -54,7 +57,7 @@ public class AddItemActivity extends Activity {
                     listItem.setWhatToDo(whatToDo.getText().toString());
                     listItem.setPlace(place.getText().toString());
                     listItem.setDescription(description.getText().toString());
-                    listItem.setId(itemId++);
+                    listItem.setId(todos.size());
                     realm.commitTransaction();
                 } catch (Exception e) {
                     realm.cancelTransaction();

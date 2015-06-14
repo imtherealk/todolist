@@ -31,7 +31,9 @@ public class TodoListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list);
 
+ //       Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
+
         todos = realm.where(Todo.class).findAll();
 
         addBtn = (Button)findViewById(R.id.btnadd);
@@ -80,6 +82,7 @@ public class TodoListActivity extends Activity {
             }
 
             final Todo todoItem = realmResults.get(position);
+            final int todoPosition = position;
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate());
             viewHolder.check.setChecked(todoItem.isChecked());
@@ -87,7 +90,7 @@ public class TodoListActivity extends Activity {
             convertView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
-                    intent.putExtra("position", todoItem.getId());
+                    intent.putExtra("position", todoPosition);
                     startActivity(intent);
 
                 }

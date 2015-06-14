@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Todo extends RealmObject implements Serializable {
     private String whatToDo;
@@ -12,6 +13,7 @@ public class Todo extends RealmObject implements Serializable {
     private String description;
     private RealmList<Tag> tags;
     private boolean checked;
+    @PrimaryKey
     private int id;
 
     public Todo() {

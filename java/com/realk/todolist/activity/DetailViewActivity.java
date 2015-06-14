@@ -3,6 +3,7 @@ package com.realk.todolist.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,5 +45,10 @@ public class DetailViewActivity extends Activity {
         whatToDo.setText(selectedTodo.getWhatToDo());
         place.setText(selectedTodo.getPlace());
         description.setText(selectedTodo.getDescription());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 }
