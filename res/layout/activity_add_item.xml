@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="날짜"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
         <DatePicker
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="할 일"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
         <EditText
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="장소"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
         <EditText
@@ -70,16 +70,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="부가\n설명"
-            android:textSize="25sp"
+            android:text="세부사항"
+            android:textSize="22sp"
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
         <EditText
             android:id="@+id/editdescription"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:minLines="2" />
+            android:layout_alignParentEnd="true"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -89,13 +88,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="태그"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
-        <ListView
+        <EditText
             android:id="@+id/edittags"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            />
     </RelativeLayout>
 </LinearLayout>

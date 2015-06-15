@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.realk.todolist.R;
+import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
 import io.realm.Realm;
@@ -31,7 +32,7 @@ public class TodoListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list);
 
- //       Realm.deleteRealmFile(this);
+//        Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
 
         todos = realm.where(Todo.class).findAll();
@@ -81,7 +82,7 @@ public class TodoListActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            final Todo todoItem = realmResults.get(position);
+            Todo todoItem = realmResults.get(position);
             final int todoPosition = position;
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate());

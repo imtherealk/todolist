@@ -105,7 +105,7 @@
             android:layout_centerInParent="true"
             android:layout_alignParentStart="true"/>
         <ListView
-            android:id="@+id/tags"
+            android:id="@+id/taglistview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/taglabel"
