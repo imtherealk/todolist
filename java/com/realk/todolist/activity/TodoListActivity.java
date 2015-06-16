@@ -6,16 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.realk.todolist.R;
-import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
 import io.realm.Realm;
@@ -34,7 +30,6 @@ public class TodoListActivity extends Activity {
 
 //        Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
-
         todos = realm.where(Todo.class).findAll();
 
         addBtn = (Button)findViewById(R.id.btnadd);
@@ -99,7 +94,6 @@ public class TodoListActivity extends Activity {
                     Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
                     intent.putExtra("position", todoPosition);
                     startActivity(intent);
-
                 }
             });
             return convertView;

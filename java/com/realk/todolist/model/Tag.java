@@ -1,7 +1,6 @@
 package com.realk.todolist.model;
 
 import java.io.Serializable;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
