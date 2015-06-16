@@ -97,4 +97,10 @@ public class AddItemActivity extends Activity {
             }
         });
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

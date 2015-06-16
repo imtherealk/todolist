@@ -7,12 +7,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.realk.todolist.R;
 import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
@@ -45,12 +42,9 @@ public class DetailViewActivity extends Activity {
         description = (TextView)findViewById(R.id.description);
         tagListView = (ListView)findViewById(R.id.taglistview);
 
-
-
         Intent intent = getIntent();
         Bundle selected = intent.getExtras();
         Todo selectedTodo = todos.get(selected.getInt("position"));
-
 
         tags = realm.where(Tag.class).equalTo("todos.id", selectedTodo.getId()).findAll();
         TagListAdapter tagAdapter = new TagListAdapter(this, R.id.taglistview, tags, true);
@@ -60,6 +54,12 @@ public class DetailViewActivity extends Activity {
         whatToDo.setText(selectedTodo.getWhatToDo());
         place.setText(selectedTodo.getPlace());
         description.setText(selectedTodo.getDescription());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
     @Override

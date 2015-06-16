@@ -53,6 +53,12 @@ public class TodoListActivity extends Activity {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
+
     private static class ViewHolder {
         TextView whatToDo;
         TextView date;
