@@ -21,7 +21,7 @@ import io.realm.RealmResults;
 public class TodoListActivity extends Activity {
     Realm realm;
     RealmResults<Todo> todos;
-    Button addBtn;
+    Button addButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,13 +32,13 @@ public class TodoListActivity extends Activity {
         realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
 
-        addBtn = (Button)findViewById(R.id.btnadd);
-        final ListView todoList = (ListView)findViewById(R.id.todolistview);
+        addButton = (Button)findViewById(R.id.btnadd);
+        final ListView todoListView = (ListView)findViewById(R.id.todolistview);
 
         TodoListAdapter todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-        todoList.setAdapter(todoAdapter);
+        todoListView.setAdapter(todoAdapter);
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TodoListActivity.this, AddItemActivity.class);
@@ -57,13 +57,10 @@ public class TodoListActivity extends Activity {
     private static class ViewHolder {
         TextView whatToDo;
         TextView date;
-        CheckBox check;
+        CheckBox checkBox;
     }
 
     class TodoListAdapter extends RealmBaseAdapter<Todo> implements ListAdapter {
-        Context context;
-        RealmResults<Todo> todos;
-        int layout;
 
         public TodoListAdapter(Context context, int resId, RealmResults<Todo> realmResults, boolean automaticUpdate) {
             super(context, realmResults, automaticUpdate);
@@ -77,7 +74,7 @@ public class TodoListActivity extends Activity {
                 viewHolder = new ViewHolder();
                 viewHolder.whatToDo = (TextView) convertView.findViewById(R.id.whattodo);
                 viewHolder.date = (TextView) convertView.findViewById(R.id.date);
-                viewHolder.check = (CheckBox) convertView.findViewById(R.id.check);
+                viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -87,7 +84,7 @@ public class TodoListActivity extends Activity {
             final int todoPosition = position;
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate());
-            viewHolder.check.setChecked(todoItem.isChecked());
+            viewHolder.checkBox.setChecked(todoItem.isChecked());
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

@@ -23,10 +23,10 @@ public class DetailViewActivity extends Activity {
     Realm realm;
     RealmResults<Todo> todos;
     RealmResults<Tag> tags;
-    TextView date;
-    TextView whatToDo;
-    TextView place;
-    TextView description;
+    TextView dateTextView;
+    TextView whatToDoTextView;
+    TextView placeTextView;
+    TextView descriptionTextView;
     ListView tagListView;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -36,10 +36,10 @@ public class DetailViewActivity extends Activity {
         realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
 
-        date = (TextView)findViewById(R.id.date);
-        whatToDo = (TextView)findViewById(R.id.whattodo);
-        place = (TextView)findViewById(R.id.place);
-        description = (TextView)findViewById(R.id.description);
+        dateTextView = (TextView)findViewById(R.id.date);
+        whatToDoTextView = (TextView)findViewById(R.id.whattodo);
+        placeTextView = (TextView)findViewById(R.id.place);
+        descriptionTextView = (TextView)findViewById(R.id.description);
         tagListView = (ListView)findViewById(R.id.taglistview);
 
         Intent intent = getIntent();
@@ -50,10 +50,10 @@ public class DetailViewActivity extends Activity {
         TagListAdapter tagAdapter = new TagListAdapter(this, R.id.taglistview, tags, true);
         tagListView.setAdapter(tagAdapter);
 
-        date.setText(selectedTodo.getDate());
-        whatToDo.setText(selectedTodo.getWhatToDo());
-        place.setText(selectedTodo.getPlace());
-        description.setText(selectedTodo.getDescription());
+        dateTextView.setText(selectedTodo.getDate());
+        whatToDoTextView.setText(selectedTodo.getWhatToDo());
+        placeTextView.setText(selectedTodo.getPlace());
+        descriptionTextView.setText(selectedTodo.getDescription());
     }
 
     @Override

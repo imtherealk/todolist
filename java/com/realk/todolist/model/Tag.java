@@ -13,9 +13,8 @@ public class Tag extends RealmObject implements Serializable {
     public Tag() {
         super();
     }
-    public Tag(String tagName, Todo todo) {
+    public Tag(String tagName) {
         this.tagName = tagName;
-        todos.add(todo);
     }
 
     public void setTagName(String tagName) {

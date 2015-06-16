@@ -18,12 +18,12 @@ public class AddItemActivity extends Activity {
     Realm realm;
     RealmResults<Todo> todos;
     RealmResults<Tag> alltags;
-    Button saveBtn;
-    DatePicker picker;
-    EditText whatToDo;
-    EditText place;
-    EditText description;
-    EditText tags;
+    Button saveButton;
+    DatePicker datePicker;
+    EditText whatToDoEditText;
+    EditText placeEditText;
+    EditText descriptionEditText;
+    EditText tagsEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,48 +34,47 @@ public class AddItemActivity extends Activity {
         todos = realm.where(Todo.class).findAll();
         alltags = realm.where(Tag.class).findAll();
 
-        saveBtn = (Button)findViewById(R.id.btnsave);
-        picker = (DatePicker)findViewById(R.id.datepicker);
-        whatToDo = (EditText)findViewById(R.id.editwhattodo);
-        place = (EditText)findViewById(R.id.editplace);
-        description = (EditText)findViewById(R.id.editdescription);
-        tags = (EditText)findViewById(R.id.edittags);
+        saveButton = (Button)findViewById(R.id.btnsave);
+        datePicker = (DatePicker)findViewById(R.id.datepicker);
+        whatToDoEditText = (EditText)findViewById(R.id.editwhattodo);
+        placeEditText = (EditText)findViewById(R.id.editplace);
+        descriptionEditText = (EditText)findViewById(R.id.editdescription);
+        tagsEditText = (EditText)findViewById(R.id.edittags);
 
-        picker.init(picker.getYear(), picker.getMonth(), picker.getDayOfMonth(),
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
                 new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                     }
                 });
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         Todo listItem = realm.createObject(Todo.class);
-                        listItem.setDate(String.format("%d.%02d.%02d.", picker.getYear(), picker.getMonth() + 1, picker.getDayOfMonth()));
-                        listItem.setWhatToDo(whatToDo.getText().toString());
-                        listItem.setPlace(place.getText().toString());
-                        listItem.setDescription(description.getText().toString());
+                        listItem.setDate(String.format("%d.%02d.%02d.", datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth()));
+                        listItem.setWhatToDo(whatToDoEditText.getText().toString());
+                        listItem.setPlace(placeEditText.getText().toString());
+                        listItem.setDescription(descriptionEditText.getText().toString());
                         listItem.setId(todos.size());
 
-                        String taglist = tags.getText().toString();
+                        String taglist = tagsEditText.getText().toString();
                         StringTokenizer str = new StringTokenizer(taglist, ",");
-                        while(str.hasMoreTokens()){
+                        while (str.hasMoreTokens()) {
                             String temp = str.nextToken();
-                            if(!str.equals(",")){
+                            if (!str.equals(",")) {
                                 Tag tag = new Tag();
                                 tag.setTagName(temp);
                                 Tag tagcheck = realm.where(Tag.class).equalTo("tagName", temp).findFirst();
 
-                                if(tagcheck == null) {
+                                if (tagcheck == null) {
                                     Tag newtag = realm.copyToRealm(tag);
                                     newtag.getTodos().add(listItem);
                                     listItem.getTags().add(newtag);
-                                }
-                                else tagcheck.getTodos().add(listItem);
+                                } else tagcheck.getTodos().add(listItem);
 
 
                             }
