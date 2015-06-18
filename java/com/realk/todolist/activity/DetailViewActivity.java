@@ -21,7 +21,7 @@ import io.realm.RealmResults;
 public class DetailViewActivity extends Activity {
 
     Realm realm;
-    RealmResults<Todo> todos;
+    Todo todo;
     RealmResults<Tag> tags;
     TextView dateTextView;
     TextView whatToDoTextView;
@@ -34,7 +34,6 @@ public class DetailViewActivity extends Activity {
         setContentView(R.layout.activity_detail);
 
         realm = Realm.getInstance(this);
-        todos = realm.where(Todo.class).findAll();
 
         dateTextView = (TextView)findViewById(R.id.date);
         whatToDoTextView = (TextView)findViewById(R.id.whattodo);
@@ -44,16 +43,17 @@ public class DetailViewActivity extends Activity {
 
         Intent intent = getIntent();
         Bundle selected = intent.getExtras();
-        Todo selectedTodo = todos.get(selected.getInt("position"));
+        int todoId = selected.getInt("todoId");
+        this.todo = realm.where(Todo.class).equalTo("id", todoId).findFirst();
 
-        tags = realm.where(Tag.class).equalTo("todos.id", selectedTodo.getId()).findAll();
+        tags = realm.where(Tag.class).equalTo("todos.id", this.todo.getId()).findAll();
         TagListAdapter tagAdapter = new TagListAdapter(this, R.id.taglistview, tags, true);
         tagListView.setAdapter(tagAdapter);
 
-        dateTextView.setText(selectedTodo.getDate());
-        whatToDoTextView.setText(selectedTodo.getWhatToDo());
-        placeTextView.setText(selectedTodo.getPlace());
-        descriptionTextView.setText(selectedTodo.getDescription());
+        dateTextView.setText(this.todo.getDate());
+        whatToDoTextView.setText(this.todo.getWhatToDo());
+        placeTextView.setText(this.todo.getPlace());
+        descriptionTextView.setText(this.todo.getDescription());
     }
 
     @Override

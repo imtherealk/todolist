@@ -80,8 +80,7 @@ public class TodoListActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            Todo todoItem = realmResults.get(position);
-            final int todoPosition = position;
+            final Todo todoItem = realmResults.get(position);
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate());
             viewHolder.checkBox.setChecked(todoItem.isChecked());
@@ -89,7 +88,7 @@ public class TodoListActivity extends Activity {
             convertView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
-                    intent.putExtra("position", todoPosition);
+                    intent.putExtra("todoId", todoItem.getId());
                     startActivity(intent);
                 }
             });
