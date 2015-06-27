@@ -50,7 +50,7 @@ public class DetailViewActivity extends Activity {
         TagListAdapter tagAdapter = new TagListAdapter(this, R.id.taglistview, tags, true);
         tagListView.setAdapter(tagAdapter);
 
-        dateTextView.setText(this.todo.getDate());
+        dateTextView.setText(this.todo.getDate().toString());
         whatToDoTextView.setText(this.todo.getWhatToDo());
         placeTextView.setText(this.todo.getPlace());
         descriptionTextView.setText(this.todo.getDescription());

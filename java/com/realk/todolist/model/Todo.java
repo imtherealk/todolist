@@ -1,13 +1,15 @@
 package com.realk.todolist.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Todo extends RealmObject implements Serializable {
     private String whatToDo;
-    private String date;
+    private Date date;
     private String place;
     private String description;
     private RealmList<Tag> tags;
@@ -21,7 +23,7 @@ public class Todo extends RealmObject implements Serializable {
     }
 
     public void setId(int id) { this.id = id; }
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
     public void setWhatToDo(String whatToDo) {
@@ -46,7 +48,7 @@ public class Todo extends RealmObject implements Serializable {
     public String getWhatToDo() {
         return whatToDo;
     }
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
     public String getPlace() {
@@ -61,4 +63,5 @@ public class Todo extends RealmObject implements Serializable {
     public boolean isChecked() {
         return checked;
     }
+
 }

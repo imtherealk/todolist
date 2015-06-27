@@ -6,10 +6,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
 import com.realk.todolist.R;
 import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
-import java.util.StringTokenizer;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -41,43 +46,41 @@ public class AddItemActivity extends Activity {
         descriptionEditText = (EditText)findViewById(R.id.editdescription);
         tagsEditText = (EditText)findViewById(R.id.edittags);
 
-        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                new DatePicker.OnDateChangedListener() {
-                    @Override
-                    public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    }
-                });
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, datePicker.getYear());
+                calendar.set(Calendar.MONTH, datePicker.getMonth());
+                calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
+                calendar.set(Calendar.HOUR, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+
+                final Date date = calendar.getTime();
+                final String whatTodo = whatToDoEditText.getText().toString();
+                final String place = placeEditText.getText().toString();
+                final String description = descriptionEditText.getText().toString();
+                final List<String> tagStrings = Arrays.asList(tagsEditText.getText().toString().split(","));
+
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        Todo listItem = realm.createObject(Todo.class);
-                        listItem.setDate(String.format("%d.%02d.%02d.", datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth()));
-                        listItem.setWhatToDo(whatToDoEditText.getText().toString());
-                        listItem.setPlace(placeEditText.getText().toString());
-                        listItem.setDescription(descriptionEditText.getText().toString());
-                        listItem.setId(todos.size());
+                        Todo todo = realm.createObject(Todo.class);
 
-                        String taglist = tagsEditText.getText().toString();
-                        StringTokenizer str = new StringTokenizer(taglist, ",");
-                        while (str.hasMoreTokens()) {
-                            String temp = str.nextToken();
-                            if (!str.equals(",")) {
-                                Tag tag = new Tag();
-                                tag.setTagName(temp);
-                                Tag tagcheck = realm.where(Tag.class).equalTo("tagName", temp).findFirst();
+                        todo.setId((int) (realm.where(Todo.class).maximumInt("id") + 1));
+                        todo.setDate(date);
+                        todo.setWhatToDo(whatTodo);
+                        todo.setPlace(place);
+                        todo.setDescription(description);
 
-                                if (tagcheck == null) {
-                                    Tag newtag = realm.copyToRealm(tag);
-                                    newtag.getTodos().add(listItem);
-                                    listItem.getTags().add(newtag);
-                                } else tagcheck.getTodos().add(listItem);
-
-
+                        for (String tagString : tagStrings) {
+                            Tag tag = realm.where(Tag.class).equalTo("tagName", tagString).findFirst();
+                            if (tag == null) {
+                                tag = realm.createObject(Tag.class);
+                                tag.setTagName(tagString);
                             }
+                            todo.getTags().add(tag);
                         }
                     }
                 });

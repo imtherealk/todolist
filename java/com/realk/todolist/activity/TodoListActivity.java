@@ -82,7 +82,7 @@ public class TodoListActivity extends Activity {
 
             final Todo todoItem = realmResults.get(position);
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
-            viewHolder.date.setText(todoItem.getDate());
+            viewHolder.date.setText(todoItem.getDate().toString());
             viewHolder.checkBox.setChecked(todoItem.isChecked());
 
             convertView.setOnClickListener(new View.OnClickListener() {
