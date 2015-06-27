@@ -115,6 +115,9 @@ public class DetailViewActivity extends Activity {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
+                        for(Tag tag : todo.getTags()) {
+                            tag.getTodos().remove(todo);
+                        }
                         todo.removeFromRealm();
                     }
                 });

@@ -81,6 +81,7 @@ public class AddItemActivity extends Activity {
                                 tag.setTagName(tagString);
                             }
                             todo.getTags().add(tag);
+                            tag.getTodos().add(todo);
                         }
                     }
                 });

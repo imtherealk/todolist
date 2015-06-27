@@ -106,6 +106,10 @@ public class ModifyItemActivity extends Activity {
                         todo.setWhatToDo(whatTodo);
                         todo.setPlace(place);
                         todo.setDescription(description);
+
+                        for(Tag tag : todo.getTags()) {
+                            tag.getTodos().remove(todo);
+                        }
                         todo.getTags().clear();
 
                         for (String tagString : tagStrings) {
@@ -115,6 +119,7 @@ public class ModifyItemActivity extends Activity {
                                 tag.setTagName(tagString);
                             }
                             todo.getTags().add(tag);
+                            tag.getTodos().add(todo);
                         }
                     }
                 });
