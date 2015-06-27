@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -62,11 +63,6 @@ public class DetailViewActivity extends Activity {
         realm.close();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
     private static class ViewHolder {
         TextView tagName;
         TextView deleteTag;
@@ -98,4 +94,33 @@ public class DetailViewActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        menu.add(0,1,0,"수정");
+        menu.add(0,2,0,"삭제");
+
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                Intent intent = new Intent(DetailViewActivity.this, ModifyItemActivity.class);
+                intent.putExtra("todoId", todo.getId());
+                startActivity(intent);
+                return true;
+            case 2:
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        todo.removeFromRealm();
+                    }
+                });
+                finish();
+                return true;
+        }
+        return false;
+    }
 }

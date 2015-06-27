@@ -24,6 +24,10 @@
             android:name=".activity.DetailViewActivity"
             android:label="DetailViewActivity" >
         </activity>
+        <activity
+            android:name=".activity.ModifyItemActivity"
+            android:label="ModifyItemActivity" >
+        </activity>
     </application>
 
 </manifest>
