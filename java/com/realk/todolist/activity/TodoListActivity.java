@@ -85,6 +85,20 @@ public class TodoListActivity extends Activity {
             viewHolder.date.setText(todoItem.getDate().toString());
             viewHolder.checkBox.setChecked(todoItem.isChecked());
 
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final CheckBox checkBox = (CheckBox) v;
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            todoItem.setChecked(checkBox.isChecked());
+                        }
+                    });
+
+                }
+            });
+
             convertView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent intent = new Intent(TodoListActivity.this, DetailViewActivity.class);
