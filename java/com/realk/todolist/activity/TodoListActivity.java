@@ -31,6 +31,7 @@ public class TodoListActivity extends Activity {
 //        Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
+        todos.sort("date");
 
         addButton = (Button)findViewById(R.id.btnadd);
         final ListView todoListView = (ListView)findViewById(R.id.todolistview);
