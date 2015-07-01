@@ -3,10 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
-    <Spinner
-        android:id="@+id/tagspinner"
+    <Button
+        android:id="@+id/btntagselect"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:background="@android:drawable/btn_dropdown"
+        android:text="태그를 선택하세요" />
     <Button
         android:id="@+id/btnadd"
         android:layout_width="match_parent"

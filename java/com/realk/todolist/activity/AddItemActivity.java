@@ -38,7 +38,7 @@ public class AddItemActivity extends Activity {
         realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
         alltags = realm.where(Tag.class).findAll();
-        
+
         saveButton = (Button) findViewById(R.id.btnsave);
         datePicker = (DatePicker) findViewById(R.id.datepicker);
         whatToDoEditText = (EditText) findViewById(R.id.editwhattodo);
