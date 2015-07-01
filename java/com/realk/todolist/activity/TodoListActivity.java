@@ -120,11 +120,10 @@ public class TodoListActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-
-        menu.add(0,1,0,"Not Done");
-        menu.add(0,2,0,"Done");
-        menu.add(0,3,0,"All");
-
+        menu.add(0,1,0,"Not Done").setCheckable(true).setChecked(true);
+        menu.add(0,2,0,"Done").setCheckable(true);
+        menu.add(0,3,0,"All").setCheckable(true);
+        menu.setGroupCheckable(0, true, true);
         return true;
     }
 
@@ -132,17 +131,23 @@ public class TodoListActivity extends Activity {
         TodoListAdapter todoAdapter;
         switch (item.getItemId()) {
             case 1:
+                item.setChecked(true);
                 todos = realm.where(Todo.class).equalTo("checked", false).findAll();
+                todos.sort("date");
                 todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
                 todoListView.setAdapter(todoAdapter);
                 return true;
             case 2:
+                item.setChecked(true);
                 todos = realm.where(Todo.class).equalTo("checked", true).findAll();
+                todos.sort("date");
                 todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
                 todoListView.setAdapter(todoAdapter);
                 return true;
             case 3:
+                item.setChecked(true);
                 todos = realm.where(Todo.class).findAll();
+                todos.sort("date");
                 todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
                 todoListView.setAdapter(todoAdapter);
                 return true;
