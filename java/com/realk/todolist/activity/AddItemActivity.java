@@ -38,13 +38,13 @@ public class AddItemActivity extends Activity {
         realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
         alltags = realm.where(Tag.class).findAll();
-
-        saveButton = (Button)findViewById(R.id.btnsave);
-        datePicker = (DatePicker)findViewById(R.id.datepicker);
-        whatToDoEditText = (EditText)findViewById(R.id.editwhattodo);
-        placeEditText = (EditText)findViewById(R.id.editplace);
-        descriptionEditText = (EditText)findViewById(R.id.editdescription);
-        tagsEditText = (EditText)findViewById(R.id.edittags);
+        
+        saveButton = (Button) findViewById(R.id.btnsave);
+        datePicker = (DatePicker) findViewById(R.id.datepicker);
+        whatToDoEditText = (EditText) findViewById(R.id.editwhattodo);
+        placeEditText = (EditText) findViewById(R.id.editplace);
+        descriptionEditText = (EditText) findViewById(R.id.editdescription);
+        tagsEditText = (EditText) findViewById(R.id.edittags);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +75,8 @@ public class AddItemActivity extends Activity {
                         todo.setDescription(description);
 
                         for (String tagString : tagStrings) {
+                            if (tagString.trim().equals(""))
+                                continue;
                             Tag tag = realm.where(Tag.class).equalTo("tagName", tagString).findFirst();
                             if (tag == null) {
                                 tag = realm.createObject(Tag.class);
