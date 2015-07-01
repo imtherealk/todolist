@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.realk.todolist.R;
+import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
 import io.realm.Realm;
@@ -22,6 +25,7 @@ public class TodoListActivity extends Activity {
     Realm realm;
     RealmResults<Todo> todos;
     Button addButton;
+    ListView todoListView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,11 +34,11 @@ public class TodoListActivity extends Activity {
 
 //        Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
-        todos = realm.where(Todo.class).findAll();
+        todos = realm.where(Todo.class).equalTo("checked", false).findAll();
         todos.sort("date");
 
         addButton = (Button)findViewById(R.id.btnadd);
-        final ListView todoListView = (ListView)findViewById(R.id.todolistview);
+        todoListView = (ListView)findViewById(R.id.todolistview);
 
         TodoListAdapter todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
         todoListView.setAdapter(todoAdapter);
@@ -109,9 +113,40 @@ public class TodoListActivity extends Activity {
             });
             return convertView;
         }
-
         public RealmResults<Todo> getRealmResults() {
             return realmResults;
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        menu.add(0,1,0,"Not Done");
+        menu.add(0,2,0,"Done");
+        menu.add(0,3,0,"All");
+
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        TodoListAdapter todoAdapter;
+        switch (item.getItemId()) {
+            case 1:
+                todos = realm.where(Todo.class).equalTo("checked", false).findAll();
+                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
+                todoListView.setAdapter(todoAdapter);
+                return true;
+            case 2:
+                todos = realm.where(Todo.class).equalTo("checked", true).findAll();
+                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
+                todoListView.setAdapter(todoAdapter);
+                return true;
+            case 3:
+                todos = realm.where(Todo.class).findAll();
+                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
+                todoListView.setAdapter(todoAdapter);
+                return true;
+        }
+        return false;
     }
 }
