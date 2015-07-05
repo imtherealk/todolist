@@ -47,14 +47,11 @@ public class TodoListActivity extends Activity {
 
 //      Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
-        todos = realm.where(Todo.class).equalTo("checked", false).findAll();
-        todos.sort("date");
-
         addButton = (Button)findViewById(R.id.btnadd);
         tagSelectButton = (Button)findViewById(R.id.btntagselect);
         todoListView = (ListView)findViewById(R.id.todolistview);
-        todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-        todoListView.setAdapter(todoAdapter);
+        todos = realm.where(Todo.class).equalTo("checked", false).findAll();
+        updateTodoList(todos);
 
         allTagStrings = new ArrayList<>();
         allTags = realm.where(Tag.class).findAll();
@@ -71,7 +68,9 @@ public class TodoListActivity extends Activity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                Tag tag = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
+                                todos = realm.where(Todo.class).contains("tags.tagName", tag.getTagName()).findAll();
+                                updateTodoList(todos);
                                 dialog.dismiss();
                             }
                         }).create().show();
@@ -169,25 +168,26 @@ public class TodoListActivity extends Activity {
             case 1:
                 item.setChecked(true);
                 todos = realm.where(Todo.class).equalTo("checked", false).findAll();
-                todos.sort("date");
-                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-                todoListView.setAdapter(todoAdapter);
+                updateTodoList(todos);
                 return true;
             case 2:
                 item.setChecked(true);
                 todos = realm.where(Todo.class).equalTo("checked", true).findAll();
-                todos.sort("date");
-                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-                todoListView.setAdapter(todoAdapter);
+                updateTodoList(todos);
                 return true;
             case 3:
                 item.setChecked(true);
                 todos = realm.where(Todo.class).findAll();
-                todos.sort("date");
-                todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-                todoListView.setAdapter(todoAdapter);
+                updateTodoList(todos);
                 return true;
         }
         return false;
+    }
+
+    public void updateTodoList(RealmResults<Todo> todos) {
+        todos.sort("date");
+        todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
+        todoListView.setAdapter(todoAdapter);
+
     }
 }
