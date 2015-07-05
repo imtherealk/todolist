@@ -1,7 +1,9 @@
 package com.realk.todolist.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -112,16 +114,28 @@ public class DetailViewActivity extends Activity {
                 startActivity(intent);
                 return true;
             case 2:
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        for(Tag tag : todo.getTags()) {
-                            tag.getTodos().remove(todo);
-                        }
-                        todo.removeFromRealm();
-                    }
-                });
-                finish();
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setMessage("정말 삭제할까요?")
+                        .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        for (Tag tag : todo.getTags()) {
+                                            tag.getTodos().remove(todo);
+                                        }
+                                        todo.removeFromRealm();
+                                    }
+                                });
+
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("취소", null)
+                        .show();
+
                 return true;
         }
         return false;
