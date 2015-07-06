@@ -45,27 +45,27 @@ public class TodoListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list);
 
-//      Realm.deleteRealmFile(this);
+   //   Realm.deleteRealmFile(this);
         realm = Realm.getInstance(this);
-        addButton = (Button)findViewById(R.id.btnadd);
-        tagSelectButton = (Button)findViewById(R.id.btntagselect);
-        todoListView = (ListView)findViewById(R.id.todolistview);
+        addButton = (Button) findViewById(R.id.btnadd);
+        tagSelectButton = (Button) findViewById(R.id.btntagselect);
+        todoListView = (ListView) findViewById(R.id.todolistview);
         todos = realm.where(Todo.class).equalTo("checked", false).findAll();
         updateTodoList(todos);
-
-        allTagStrings = new ArrayList<>();
-        allTags = realm.where(Tag.class).findAll();
-        for(Tag tag : allTags) {
-            allTagStrings.add(tag.getTagName());
-        }
-        tagsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, allTagStrings);
 
         tagSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(TodoListActivity.this).setTitle("Tags")
-                        .setAdapter(tagsAdapter, new DialogInterface.OnClickListener() {
+                allTagStrings = new ArrayList<>();
+                allTags = realm.where(Tag.class).findAll();
+                allTags.sort("tagName");
+                for (Tag tag : allTags) {
+                    allTagStrings.add(tag.getTagName());
+                }
+                tagsAdapter = new ArrayAdapter<String>(TodoListActivity.this, android.R.layout.simple_spinner_dropdown_item, allTagStrings);
 
+                new AlertDialog.Builder(TodoListActivity.this)
+                        .setAdapter(tagsAdapter, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Tag tag = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
@@ -76,7 +76,6 @@ public class TodoListActivity extends Activity {
                         }).create().show();
             }
         });
-
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +99,7 @@ public class TodoListActivity extends Activity {
         TextView date;
         CheckBox checkBox;
     }
+
     class TodoListAdapter extends RealmBaseAdapter<Todo> implements ListAdapter {
 
         public TodoListAdapter(Context context, int resId, RealmResults<Todo> realmResults, boolean automaticUpdate) {
@@ -109,7 +109,7 @@ public class TodoListActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
-            if(convertView == null) {
+            if (convertView == null) {
                 convertView = inflater.inflate(R.layout.todolistview, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.whatToDo = (TextView) convertView.findViewById(R.id.whattodo);
@@ -148,16 +148,18 @@ public class TodoListActivity extends Activity {
             });
             return convertView;
         }
+
         public RealmResults<Todo> getRealmResults() {
             return realmResults;
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0,1,0,"Not Done").setCheckable(true).setChecked(true);
-        menu.add(0,2,0,"Done").setCheckable(true);
-        menu.add(0,3,0,"All").setCheckable(true);
+        menu.add(0, 1, 0, "Not Done").setCheckable(true).setChecked(true);
+        menu.add(0, 2, 0, "Done").setCheckable(true);
+        menu.add(0, 3, 0, "All").setCheckable(true);
         menu.setGroupCheckable(0, true, true);
         return true;
     }
