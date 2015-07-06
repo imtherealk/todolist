@@ -1,6 +1,7 @@
 package com.realk.todolist.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class AddItemActivity extends Activity {
     EditText placeEditText;
     EditText descriptionEditText;
     EditText tagsEditText;
+    Todo todoItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,8 +87,12 @@ public class AddItemActivity extends Activity {
                             todo.getTags().add(tag);
                             tag.getTodos().add(todo);
                         }
+                        todoItem = todo;
                     }
                 });
+                Intent intent = new Intent(AddItemActivity.this, DetailViewActivity.class);
+                intent.putExtra("todoId", todoItem.getId());
+                startActivity(intent);
                 finish();
             }
         });
