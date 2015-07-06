@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.realk.todolist.R;
@@ -29,12 +28,14 @@ import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 
 public class TodoListActivity extends Activity {
+
+    Tag tagfilter;
+    Status status;
     Realm realm;
     RealmResults<Todo> todos;
     Button tagSelectButton;
     Button addButton;
     ListView todoListView;
-    Spinner tagSpinner;
     TodoListAdapter todoAdapter;
     ArrayAdapter<String> tagsAdapter;
     RealmResults<Tag> allTags;
@@ -50,8 +51,9 @@ public class TodoListActivity extends Activity {
         addButton = (Button) findViewById(R.id.btnadd);
         tagSelectButton = (Button) findViewById(R.id.btntagselect);
         todoListView = (ListView) findViewById(R.id.todolistview);
-        todos = realm.where(Todo.class).equalTo("checked", false).findAll();
-        updateTodoList(todos);
+        status = Status.NOT_DONE;
+        tagfilter = null;
+        updateTodoList();
 
         tagSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +61,7 @@ public class TodoListActivity extends Activity {
                 allTagStrings = new ArrayList<>();
                 allTags = realm.where(Tag.class).findAll();
                 allTags.sort("tagName");
+                allTagStrings.add("-전체보기-");
                 for (Tag tag : allTags) {
                     allTagStrings.add(tag.getTagName());
                 }
@@ -68,10 +71,14 @@ public class TodoListActivity extends Activity {
                         .setAdapter(tagsAdapter, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Tag tag = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
-                                todos = realm.where(Todo.class).contains("tags.tagName", tag.getTagName()).findAll();
+                                if(allTagStrings.get(which).equals("-전체보기-")){
+                                    tagfilter = null;
+                                }
+                                else {
+                                    tagfilter = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
+                                }
                                 tagSelectButton.setText(allTagStrings.get(which));
-                                updateTodoList(todos);
+                                updateTodoList();
                                 dialog.dismiss();
                             }
                         }).create().show();
@@ -86,7 +93,6 @@ public class TodoListActivity extends Activity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -170,27 +176,41 @@ public class TodoListActivity extends Activity {
         switch (item.getItemId()) {
             case 1:
                 item.setChecked(true);
-                todos = realm.where(Todo.class).equalTo("checked", false).findAll();
-                updateTodoList(todos);
+                status = Status.NOT_DONE;
+                updateTodoList();
                 return true;
             case 2:
                 item.setChecked(true);
-                todos = realm.where(Todo.class).equalTo("checked", true).findAll();
-                updateTodoList(todos);
+                status = Status.DONE;
+                updateTodoList();
                 return true;
             case 3:
                 item.setChecked(true);
-                todos = realm.where(Todo.class).findAll();
-                updateTodoList(todos);
+                status = Status.ALL;
+                updateTodoList();
                 return true;
         }
         return false;
     }
 
-    public void updateTodoList(RealmResults<Todo> todos) {
+    public void updateTodoList() {
+
+        if(tagfilter!=null) {
+            todos = realm.where(Todo.class).contains("tags.tagName", tagfilter.getTagName()).findAll();
+        }
+        else todos = realm.where(Todo.class).findAll();
+        switch (status) {
+            case NOT_DONE:
+                todos = todos.where().equalTo("checked", false).findAll();
+                break;
+            case DONE:
+                todos = todos.where().equalTo("checked", true).findAll();
+                break;
+            case ALL:
+                break;
+        }
         todos.sort("date");
         todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
         todoListView.setAdapter(todoAdapter);
-
     }
 }
