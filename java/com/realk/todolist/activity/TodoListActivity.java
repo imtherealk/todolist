@@ -70,6 +70,7 @@ public class TodoListActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Tag tag = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
                                 todos = realm.where(Todo.class).contains("tags.tagName", tag.getTagName()).findAll();
+                                tagSelectButton.setText(allTagStrings.get(which));
                                 updateTodoList(todos);
                                 dialog.dismiss();
                             }
