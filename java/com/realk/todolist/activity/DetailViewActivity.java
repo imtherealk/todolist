@@ -17,6 +17,8 @@ import com.realk.todolist.R;
 import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
@@ -121,10 +123,13 @@ public class DetailViewActivity extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 realm.executeTransaction(new Realm.Transaction() {
+                                    List<Tag> tags = todo.getTags();
                                     @Override
                                     public void execute(Realm realm) {
-                                        for (Tag tag : todo.getTags()) {
+                                        for (Tag tag : tags) {
                                             tag.getTodos().remove(todo);
+                                            if(tag.getTodos().isEmpty())
+                                                tag.removeFromRealm();
                                         }
                                         todo.removeFromRealm();
                                     }
