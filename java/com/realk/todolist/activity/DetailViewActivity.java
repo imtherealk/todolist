@@ -17,6 +17,7 @@ import com.realk.todolist.R;
 import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -122,14 +123,17 @@ public class DetailViewActivity extends Activity {
                         .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                final ArrayList<Tag> tagsToRemove = new ArrayList<Tag>();
                                 realm.executeTransaction(new Realm.Transaction() {
-                                    List<Tag> tags = todo.getTags();
                                     @Override
                                     public void execute(Realm realm) {
-                                        for (Tag tag : tags) {
+                                        for (Tag tag : todo.getTags()) {
                                             tag.getTodos().remove(todo);
                                             if(tag.getTodos().isEmpty())
-                                                tag.removeFromRealm();
+                                                tagsToRemove.add(tag);
+                                        }
+                                        for(Tag tag : tagsToRemove) {
+                                            tag.removeFromRealm();
                                         }
                                         todo.removeFromRealm();
                                     }
