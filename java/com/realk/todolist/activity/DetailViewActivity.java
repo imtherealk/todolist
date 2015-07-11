@@ -24,9 +24,7 @@ import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
 import io.realm.RealmResults;
 
-public class DetailViewActivity extends Activity {
-
-    Realm realm;
+public class DetailViewActivity extends BaseActivity {
     Todo todo;
     RealmResults<Tag> tags;
     TextView dateTextView;
@@ -38,8 +36,6 @@ public class DetailViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        realm = Realm.getInstance(this);
 
         dateTextView = (TextView)findViewById(R.id.date);
         whatToDoTextView = (TextView)findViewById(R.id.whattodo);
@@ -60,12 +56,6 @@ public class DetailViewActivity extends Activity {
         whatToDoTextView.setText(this.todo.getWhatToDo());
         placeTextView.setText(this.todo.getPlace());
         descriptionTextView.setText(this.todo.getDescription());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
     }
 
     private static class ViewHolder {

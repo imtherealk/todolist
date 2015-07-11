@@ -20,8 +20,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class AddItemActivity extends Activity {
-    Realm realm;
+public class AddItemActivity extends BaseActivity {
     RealmResults<Todo> todos;
     RealmResults<Tag> alltags;
     Button saveButton;
@@ -37,7 +36,6 @@ public class AddItemActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
         alltags = realm.where(Tag.class).findAll();
 
@@ -96,11 +94,5 @@ public class AddItemActivity extends Activity {
                 finish();
             }
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
     }
 }

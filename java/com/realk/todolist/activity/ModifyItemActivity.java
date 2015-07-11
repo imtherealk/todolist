@@ -1,6 +1,5 @@
 package com.realk.todolist.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +7,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 import com.realk.todolist.R;
 import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
@@ -15,14 +17,12 @@ import com.realk.todolist.model.Todo;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class ModifyItemActivity extends Activity {
-    Realm realm;
+public class ModifyItemActivity extends BaseActivity {
     RealmResults<Todo> todos;
     RealmResults<Tag> tags;
     Todo todo;
@@ -38,7 +38,6 @@ public class ModifyItemActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        realm = Realm.getInstance(this);
         todos = realm.where(Todo.class).findAll();
 
         saveButton = (Button) findViewById(R.id.btnsave);
@@ -58,13 +57,12 @@ public class ModifyItemActivity extends Activity {
         placeEditText.setText(todo.getPlace());
         descriptionEditText.setText(todo.getDescription());
 
-        String tagString = "";
-        Iterator<Tag> tagIterator = tags.iterator();
-        while (tagIterator.hasNext()) {
-            tagString += tagIterator.next().getTagName();
-            if (tagIterator.hasNext())
-                tagString += ",";
-        }
+        String tagString = Joiner.on(",").join(Collections2.transform(tags, new Function<Tag, String>() {
+            @Override
+            public String apply(Tag input) {
+                return input.getTagName();
+            }
+        }));
 
         tagsEditText.setText(tagString);
 
@@ -107,7 +105,7 @@ public class ModifyItemActivity extends Activity {
                         todo.setPlace(place);
                         todo.setDescription(description);
 
-                        for(Tag tag : todo.getTags()) {
+                        for (Tag tag : todo.getTags()) {
                             tag.getTodos().remove(todo);
                         }
                         todo.getTags().clear();
@@ -126,10 +124,5 @@ public class ModifyItemActivity extends Activity {
                 finish();
             }
         });
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
     }
 }

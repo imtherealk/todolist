@@ -1,16 +1,17 @@
 package com.realk.todolist.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
@@ -22,70 +23,47 @@ import com.realk.todolist.model.Tag;
 import com.realk.todolist.model.Todo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmBaseAdapter;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-public class TodoListActivity extends Activity {
+public class TodoListActivity extends BaseActivity {
 
-    Tag tagfilter;
-    Status status;
-    Realm realm;
-    RealmResults<Todo> todos;
+    /* Views */
     Button tagSelectButton;
     Button addButton;
     ListView todoListView;
-    TodoListAdapter todoAdapter;
-    ArrayAdapter<String> tagsAdapter;
-    RealmResults<Tag> allTags;
-    ArrayList<String> allTagStrings;
+
+    /* Filters */
+    Tag tagFilter;
+    Status status;
+
+    /* Data */
+    List<Todo> todos = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_list);
 
-   //   Realm.deleteRealmFile(this);
-        realm = Realm.getInstance(this);
+        /* Set views */
         addButton = (Button) findViewById(R.id.btnadd);
         tagSelectButton = (Button) findViewById(R.id.btntagselect);
         todoListView = (ListView) findViewById(R.id.todolistview);
+
+        /* Init adapter */
+        todos = fetchTodoList(null, Status.NOT_DONE);
+
+        /* Fetch initial data */
         status = Status.NOT_DONE;
-        tagfilter = null;
+        tagFilter = null;
         updateTodoList();
 
-        tagSelectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                allTagStrings = new ArrayList<>();
-                allTags = realm.where(Tag.class).findAll();
-                allTags.sort("tagName");
-                allTagStrings.add("-전체보기-");
-                for (Tag tag : allTags) {
-                    allTagStrings.add(tag.getTagName());
-                }
-                tagsAdapter = new ArrayAdapter<String>(TodoListActivity.this, android.R.layout.simple_spinner_dropdown_item, allTagStrings);
-
-                new AlertDialog.Builder(TodoListActivity.this)
-                        .setAdapter(tagsAdapter, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if(allTagStrings.get(which).equals("-전체보기-")){
-                                    tagfilter = null;
-                                }
-                                else {
-                                    tagfilter = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
-                                }
-                                tagSelectButton.setText(allTagStrings.get(which));
-                                updateTodoList();
-                                dialog.dismiss();
-                            }
-                        }).create().show();
-            }
-        });
-
-
+        /* Set listeners */
+        tagSelectButton.setOnClickListener(this.tagSelectButtonListener);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,30 +71,33 @@ public class TodoListActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        this.todoListView.setAdapter(todoListAdapter);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        realm.close();
-    }
+    private final BaseAdapter todoListAdapter = new BaseAdapter() {
 
-    private static class ViewHolder {
-        TextView whatToDo;
-        TextView date;
-        CheckBox checkBox;
-    }
+        @Override
+        public int getCount() {
+            return todos.size();
+        }
 
-    class TodoListAdapter extends RealmBaseAdapter<Todo> implements ListAdapter {
+        @Override
+        public Object getItem(int position) {
+            return todos.get(position);
+        }
 
-        public TodoListAdapter(Context context, int resId, RealmResults<Todo> realmResults, boolean automaticUpdate) {
-            super(context, realmResults, automaticUpdate);
+        @Override
+        public long getItemId(int position) {
+            return position;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
             if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.todolistview, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.whatToDo = (TextView) convertView.findViewById(R.id.whattodo);
@@ -127,7 +108,7 @@ public class TodoListActivity extends Activity {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            final Todo todoItem = realmResults.get(position);
+            final Todo todoItem = (Todo) this.getItem(position);
             viewHolder.whatToDo.setText(todoItem.getWhatToDo());
             viewHolder.date.setText(todoItem.getDate().toString());
             viewHolder.checkBox.setChecked(todoItem.isChecked());
@@ -155,11 +136,7 @@ public class TodoListActivity extends Activity {
             });
             return convertView;
         }
-
-        public RealmResults<Todo> getRealmResults() {
-            return realmResults;
-        }
-    }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,7 +149,6 @@ public class TodoListActivity extends Activity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        TodoListAdapter todoAdapter;
         switch (item.getItemId()) {
             case 1:
                 item.setChecked(true);
@@ -193,24 +169,82 @@ public class TodoListActivity extends Activity {
         return false;
     }
 
-    public void updateTodoList() {
-
-        if(tagfilter!=null) {
-            todos = realm.where(Todo.class).contains("tags.tagName", tagfilter.getTagName()).findAll();
+    public RealmResults<Todo> fetchTodoList(Tag tagFilter, Status status) {
+        RealmQuery<Todo> query = realm.where(Todo.class);
+        // Add tag filter
+        if (tagFilter != null) {
+            query = query.contains("tags.tagName", tagFilter.getTagName());
         }
-        else todos = realm.where(Todo.class).findAll();
+        // Add status filter
         switch (status) {
             case NOT_DONE:
-                todos = todos.where().equalTo("checked", false).findAll();
+                query = query.equalTo("checked", false);
                 break;
             case DONE:
-                todos = todos.where().equalTo("checked", true).findAll();
+                query = query.equalTo("checked", true);
                 break;
             case ALL:
                 break;
         }
-        todos.sort("date");
-        todoAdapter = new TodoListAdapter(this, R.id.todolistview, todos, true);
-        todoListView.setAdapter(todoAdapter);
+
+        // Execute query
+        return query.findAllSorted("date");
     }
+
+    public void updateTodoList() {
+        todos = fetchTodoList(tagFilter, status);
+
+        // Update adapter
+        todoListAdapter.notifyDataSetChanged();
+    }
+
+    private static class ViewHolder {
+        TextView whatToDo;
+        TextView date;
+        CheckBox checkBox;
+    }
+
+    public enum Status {
+        NOT_DONE,  // 완료 안됨
+        DONE,   // 완료 됨
+        ALL  // 모두
+    }
+
+    private final View.OnClickListener tagSelectButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final List<String> allTagStrings = new ArrayList<>();
+            RealmResults<Tag> allTags = realm.where(Tag.class).findAll();
+
+            allTags.sort("tagName");
+            allTagStrings.add("-전체보기-");
+            for (Tag tag : allTags) {
+                allTagStrings.add(tag.getTagName());
+            }
+            ArrayAdapter<String> tagsAdapter = new ArrayAdapter<String>(
+                    TodoListActivity.this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    allTagStrings
+            );
+
+            new AlertDialog.Builder(TodoListActivity.this)
+                    .setAdapter(tagsAdapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    tagFilter = null;
+                                    break;
+                                default:
+                                    tagFilter = realm.where(Tag.class).equalTo("tagName", allTagStrings.get(which)).findFirst();
+                                    break;
+                            }
+                            tagSelectButton.setText(allTagStrings.get(which));
+
+                            updateTodoList();
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+        }
+    };
 }
